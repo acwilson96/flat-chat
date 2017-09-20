@@ -7,12 +7,19 @@ const {
     GraphQLNonNull
 } = require('graphql');
 
+const mongoose = require('mongoose');
+
+// Connect to Mongoose.
+mongoose.Promise = require('bluebird');
+mongoose.connect('mongodb://localhost:27017/flat-chat', {useMongoClient: true});
+
 const { User, UserType }        = require('../models/user.js');
 const { Message, MessageType }  = require('../models/message.js');
 
-module.exports = {
-
-    queries: {
+// Root Query
+const RootQuery = new GraphQLObjectType({
+    name: 'RootQueryType',
+    fields: {
         // Get a specific User.
         user: {
             type: UserType,
@@ -47,9 +54,13 @@ module.exports = {
                 return Message.find().then(messages => messages);
             }
         },
-    },
+    }
+});
 
-    mutates: {
+// Mutations
+const mutation = new GraphQLObjectType({
+    name: 'Mutation',
+    fields: {
         // Create a User Model.
         addUser: {
             type: UserType,
@@ -94,5 +105,9 @@ module.exports = {
             }
         }
     }
+});
 
-}
+module.exports = new GraphQLSchema({
+    query: RootQuery,
+    mutation
+});
