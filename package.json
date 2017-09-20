@@ -1,0 +1,27 @@
+{
+  "name": "flat-chat",
+  "version": "1.0.0",
+  "description": "Group chat to run on my raspberry pi to apply GraphQL",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acwilson96/flat-chat.git"
+  },
+  "author": "Alexander Wilson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/acwilson96/flat-chat/issues"
+  },
+  "homepage": "https://github.com/acwilson96/flat-chat#readme",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "bluebird": "^3.5.0",
+    "express": "^4.15.4",
+    "express-graphql": "^0.6.11",
+    "graphql": "^0.11.3",
+    "mongoose": "^4.11.12"
+  }
+}
