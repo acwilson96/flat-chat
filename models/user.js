@@ -1,8 +1,11 @@
 var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt');
 var crypto   = require('crypto');
-
 var Schema   = mongoose.Schema;
+
+/*********************************************\
+               Mongoose Schema
+\*********************************************/
 
 var userSchema = mongoose.Schema ({
     username: {
@@ -44,19 +47,14 @@ userSchema.statics.generateTimeString = (cb) => {
     var dd = now.getDate();
     var mm = now.getMonth()+1; //January is 0!
     var yyyy = now.getFullYear();
-    
     if(dd<10) {
         dd = '0'+dd
     } 
-    
     if(mm<10) {
         mm = '0'+mm
     } 
-    
     var output = dd + '/' + mm + '/' + yyyy
-
     cb(output);
-
 }
 
 // Generates a User model.
@@ -77,4 +75,26 @@ userSchema.statics.createUserJSON = (username, password, cb) => {
 
 var User = mongoose.model('User', userSchema);
 
-module.exports = User;
+/*********************************************\
+                GraphQL Schema
+\*********************************************/
+
+const {
+    GraphQLObjectType,
+    GraphQLString,
+    GraphQLInt,
+    GraphQLSchema,
+    GraphQLList,
+    GraphQLNonNull
+} = require('graphql');
+
+const UserType = new GraphQLObjectType({
+    name: 'User',
+    fields: () => ({
+        username: { type: GraphQLString },
+        authToken: { type: GraphQLString },
+        registerDate: { type: GraphQLString }
+    }) 
+});
+
+module.exports = { User, UserType };
