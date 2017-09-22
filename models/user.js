@@ -17,6 +17,16 @@ var userSchema = mongoose.Schema ({
     registerDate: String
 });
 
+// Gets a User without the password or authToken fields.
+userSchema.statics.get = (args) => {
+    console.log('Getting user')
+    User.findOne(args).exec((err, user) => {
+        console.log('got user')
+        user.authToken = 'foo';
+        return user;
+    })
+}
+
 // Checks if a password and a hash match.
 userSchema.statics.checkPassword = (password, hash, cb) => {
     bcrypt.compare(password, hash, (err, res) => {
@@ -92,6 +102,7 @@ const UserType = new GraphQLObjectType({
     name: 'User',
     fields: () => ({
         username: { type: GraphQLString },
+        password: { type: GraphQLString },
         authToken: { type: GraphQLString },
         registerDate: { type: GraphQLString }
     }) 
