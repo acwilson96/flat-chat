@@ -20,21 +20,69 @@ const { Message, MessageType }  = require('../models/message.js');
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
+
         // Get a specific User.
         user: {
             type: UserType,
             args: {
-                id: { type: GraphQLString }
+                id: { type: GraphQLString },
+                username: { type: GraphQLString },
+                password: { type: GraphQLString },
+                authToken: { type: GraphQLString }
             },
             resolve(parentValue, args) {
-                return User.findOne(args).then(user => user);
+                return new Promise((resolve, reject) => {
+                    // If this is a login request.
+                    if (args.username && args.password) {
+                        // Find the requested User.
+                        User.findOne({
+                            username: args.username
+                        }).then(user => {
+                            // Check the passwords match.
+                            User.checkPassword(args.password, user.password, (err, match) => {
+                                // If they match, return all fields except password.
+                                if (match) {
+                                    user.password = null;
+                                    resolve(user);
+                                }
+                                else {
+                                    reject();
+                                }
+                            });
+                        });
+                    }
+                    // Checking if authToken is valid.
+                    else if (args.authToken) {
+                        // Find the User with this authToken
+                        User.findOne({
+                            authToken: args.authToken
+                        }).then(user => {
+                            // If a User exists, return the User without the password field.
+                            if (user) {
+                                user.password = null;
+                                resolve(user);
+                            }
+                            else {
+                                resolve(null);
+                            }
+                        })
+                    }
+                });
             }
         },
         // Get all Users.
         users: {
             type: new GraphQLList(UserType),
             resolve(parentValue, args) {
-                return User.find().then(users => users);
+                return new Promise((resolve, reject) => {
+                    User.find().then(users => {
+                        users.forEach((user) => {
+                            user.authToken = null;
+                            user.password  = null;
+                        });
+                        resolve(users);
+                    });
+                }).then(users => users);
             }
         },
         // Get a specific Message.
