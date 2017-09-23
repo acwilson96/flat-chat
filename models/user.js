@@ -17,6 +17,25 @@ var userSchema = mongoose.Schema ({
     registerDate: String
 });
 
+// Gets a User model if the Username and Password match.
+userSchema.statics.login = (username, password, cb) => {
+    User.findOne({
+        username: username
+    }).then(user => {
+        // Check the passwords match.
+        User.checkPassword(password, user.password, (err, match) => {
+            // If they match, return all fields except password.
+            if (match) {
+                user.password = null;
+                cb(null, user);
+            }
+            else {
+                cb('Invalid Username or Password');
+            }
+        });
+    });
+}
+
 // Checks if a password and a hash match.
 userSchema.statics.checkPassword = (password, hash, cb) => {
     bcrypt.compare(password, hash, (err, res) => {
