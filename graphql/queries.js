@@ -34,21 +34,8 @@ const RootQuery = new GraphQLObjectType({
                 return new Promise((resolve, reject) => {
                     // If this is a login request.
                     if (args.username && args.password) {
-                        // Find the requested User.
-                        User.findOne({
-                            username: args.username
-                        }).then(user => {
-                            // Check the passwords match.
-                            User.checkPassword(args.password, user.password, (err, match) => {
-                                // If they match, return all fields except password.
-                                if (match) {
-                                    user.password = null;
-                                    resolve(user);
-                                }
-                                else {
-                                    reject();
-                                }
-                            });
+                        User.login(args.username, args.password, (err, user) => {
+                            resolve(user);
                         });
                     }
                     // Checking if authToken is valid.
