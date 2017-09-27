@@ -4,7 +4,9 @@
   "description": "Group chat to run on my raspberry pi to apply GraphQL",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -22,6 +24,8 @@
     "express": "^4.15.4",
     "express-graphql": "^0.6.11",
     "graphql": "^0.11.3",
-    "mongoose": "^4.11.12"
-  }
+    "mongoose": "^4.11.12",
+    "snyk": "^1.41.1"
+  },
+  "snyk": true
 }
